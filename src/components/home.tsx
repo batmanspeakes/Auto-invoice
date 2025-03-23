@@ -1,8 +1,17 @@
 import React from "react";
 import { motion } from "framer-motion";
 import InvoiceForm from "./InvoiceForm";
+import RotatingText from "./RotatingText";
 
 const Home: React.FC = () => {
+  // Texts to be displayed in the rotating component
+  const rotatingTexts = [
+    "Create professional invoices in seconds",
+    "Get paid faster for your creative work",
+    "Streamlined process for influencers",
+    "Simple. Fast. Reliable."
+  ];
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-900 to-blue-900 flex flex-col items-center justify-center p-4 md:p-8">
       <motion.div
@@ -11,9 +20,29 @@ const Home: React.FC = () => {
         transition={{ duration: 0.6 }}
         className="w-full max-w-5xl mx-auto text-center mb-8"
       >
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-          Influencer Invoice Portal
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">
+          THE PIANOSA PROJECT
         </h1>
+        
+        <div className="text-xl md:text-2xl font-medium h-10 mb-6 flex justify-center overflow-hidden">
+          <RotatingText 
+            texts={rotatingTexts}
+            splitBy="words"
+            staggerDuration={0.03}
+            rotationInterval={3500}
+            transition={{ 
+              type: "spring", 
+              damping: 20, 
+              stiffness: 300 
+            }}
+            initial={{ y: "100%", opacity: 0, rotate: 5 }}
+            animate={{ y: 0, opacity: 1, rotate: 0 }}
+            exit={{ y: "-100%", opacity: 0, rotate: -5 }}
+            mainClassName="text-yellow-300 font-semibold"
+            elementLevelClassName="origin-bottom"
+          />
+        </div>
+        
         <p className="text-lg text-white/80 max-w-2xl mx-auto">
           Submit your campaign details and get paid faster with our streamlined
           invoice process
