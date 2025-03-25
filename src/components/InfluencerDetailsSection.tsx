@@ -19,7 +19,10 @@ import {
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name is required" }),
   address: z.string().min(5, { message: "Complete address is required" }),
-  contactNumber: z.string().min(10, { message: "Valid contact number is required" }),
+  contactNumber: z.string()
+    .regex(/^\d{10}$/, { message: "Phone number must be exactly 10 digits" })
+    .min(10, { message: "Phone number must be exactly 10 digits" })
+    .max(10, { message: "Phone number must be exactly 10 digits" }),
 });
 
 type InfluencerFormValues = z.infer<typeof formSchema>;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { ArrowLeft, ArrowRight, Save } from "lucide-react";
+import { ArrowLeft, ArrowRight, Save, Send } from "lucide-react";
 
 interface FormActionsProps {
   currentSection: number;
@@ -22,12 +22,12 @@ const FormActions = ({
   isLastSection,
 }: FormActionsProps) => {
   return (
-    <div className="flex justify-between items-center w-full mt-6 bg-white/10 backdrop-blur-md rounded-lg p-4 shadow-lg border border-white/20">
+    <div className="flex flex-col sm:flex-row justify-between items-center w-full mt-4 sm:mt-6 bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-4 shadow-lg border border-white/20 gap-3 sm:gap-0">
       <Button
         variant="outline"
         onClick={onPrevious}
         disabled={currentSection === 0}
-        className={`flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg
+        className={`w-full sm:w-auto flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg
           ${currentSection === 0 
             ? 'opacity-50 text-white/40 bg-white/5 border-white/10 cursor-not-allowed pointer-events-none' 
             : 'text-white bg-white/10 border-white/20 hover:bg-white/20 hover:border-white/30'
@@ -38,7 +38,7 @@ const FormActions = ({
         Previous
       </Button>
 
-      <div className="relative px-6 py-2">
+      <div className="relative px-6 py-2 order-first sm:order-none">
         <div className="flex items-center justify-center gap-2">
           {Array.from({ length: totalSections }).map((_, i) => (
             <div 
@@ -60,27 +60,29 @@ const FormActions = ({
 
       {isLastSection ? (
         <Button
+          variant="outline"
           onClick={onSubmit}
           disabled={!isValid}
-          className={`flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg
+          className={`w-full sm:w-auto flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg
             ${!isValid
-              ? 'opacity-50 bg-gradient-to-r from-purple-500/50 to-blue-500/50 cursor-not-allowed pointer-events-none'
-              : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
-            } text-white`}
+              ? 'opacity-50 text-white/40 bg-white/5 border-white/10 cursor-not-allowed pointer-events-none' 
+              : 'text-white bg-gradient-to-r from-purple-500 to-blue-500 border-transparent hover:opacity-90'
+            }`}
           type="button"
         >
-          <Save size={16} />
+          <Send size={16} />
           Submit Invoice
         </Button>
       ) : (
         <Button
+          variant="outline"
           onClick={onNext}
           disabled={!isValid}
-          className={`flex items-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg
+          className={`w-full sm:w-auto flex items-center justify-center gap-2 transition-all duration-300 shadow-md hover:shadow-lg
             ${!isValid
-              ? 'opacity-50 bg-gradient-to-r from-purple-500/50 to-blue-500/50 cursor-not-allowed pointer-events-none'
-              : 'bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600'
-            } text-white`}
+              ? 'opacity-50 text-white/40 bg-white/5 border-white/10 cursor-not-allowed pointer-events-none' 
+              : 'text-white bg-white/10 border-white/20 hover:bg-white/20 hover:border-white/30'
+            }`}
           type="button"
         >
           Next

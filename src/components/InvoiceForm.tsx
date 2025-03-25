@@ -19,6 +19,45 @@ interface InvoiceFormProps {
   className?: string;
 }
 
+interface InfluencerData {
+  fullName: string;
+  address: string;
+  contactNumber: string;
+}
+
+interface CampaignData {
+  brandName: string;
+  productName: string;
+  description: string;
+  month: string;
+  year: string;
+}
+
+interface FinancialData {
+  invoiceNumber: string;
+  commercials: number;
+  reimbursement: number;
+  isGstApplicable: boolean;
+  gstNumber: string;
+  gstPercentage: number;
+}
+
+interface BankData {
+  accountHolderName: string;
+  accountNumber: string;
+  bankName: string;
+  ifscCode: string;
+  panNumber: string;
+  branchName: string;
+}
+
+interface FormData {
+  influencer: InfluencerData;
+  campaign: CampaignData;
+  financial: FinancialData;
+  bank: BankData;
+}
+
 const STORAGE_KEY = "invoice_form_data";
 
 const InvoiceForm: React.FC<InvoiceFormProps> = ({
@@ -26,11 +65,65 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
   className = "",
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    influencer: {},
-    campaign: {},
-    financial: {},
-    bank: {},
+  const [formData, setFormData] = useState<FormData>({
+    influencer: {
+      fullName: "",
+      address: "",
+      contactNumber: "",
+    },
+    campaign: {
+      brandName: "",
+      productName: "",
+      description: "",
+      month: "",
+      year: "",
+    },
+    financial: {
+      invoiceNumber: "",
+      commercials: 0,
+      reimbursement: 0,
+      isGstApplicable: false,
+      gstNumber: "",
+      gstPercentage: 18,
+    },
+    bank: {
+      accountHolderName: "",
+      accountNumber: "",
+      bankName: "",
+      ifscCode: "",
+      panNumber: "",
+      branchName: "",
+    },
+  });
+  const [previewData, setPreviewData] = useState<FormData>({
+    influencer: {
+      fullName: "",
+      address: "",
+      contactNumber: "",
+    },
+    campaign: {
+      brandName: "",
+      productName: "",
+      description: "",
+      month: "",
+      year: "",
+    },
+    financial: {
+      invoiceNumber: "",
+      commercials: 0,
+      reimbursement: 0,
+      isGstApplicable: false,
+      gstNumber: "",
+      gstPercentage: 18,
+    },
+    bank: {
+      accountHolderName: "",
+      accountNumber: "",
+      bankName: "",
+      ifscCode: "",
+      panNumber: "",
+      branchName: "",
+    },
   });
   const [sectionValid, setSectionValid] = useState({
     influencer: false,
@@ -54,12 +147,39 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         const parsedData = JSON.parse(savedData);
         
         // Set form data and section validity
-        setFormData(parsedData.formData || {
-          influencer: {},
-          campaign: {},
-          financial: {},
-          bank: {},
-        });
+        const loadedFormData = parsedData.formData || {
+          influencer: {
+            fullName: "",
+            address: "",
+            contactNumber: "",
+          },
+          campaign: {
+            brandName: "",
+            productName: "",
+            description: "",
+            month: "",
+            year: "",
+          },
+          financial: {
+            invoiceNumber: "",
+            commercials: 0,
+            reimbursement: 0,
+            isGstApplicable: false,
+            gstNumber: "",
+            gstPercentage: 18,
+          },
+          bank: {
+            accountHolderName: "",
+            accountNumber: "",
+            bankName: "",
+            ifscCode: "",
+            panNumber: "",
+            branchName: "",
+          },
+        };
+        
+        setFormData(loadedFormData);
+        setPreviewData(loadedFormData);
         
         setSectionValid(parsedData.sectionValid || {
           influencer: false,
@@ -71,9 +191,9 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         setTotalAmount(parsedData.totalAmount || 0);
         
         // Set individual section data
-        setInfluencerData(parsedData.formData?.influencer || {});
-        setCampaignData(parsedData.formData?.campaign || {});
-        setFinancialData(parsedData.formData?.financial || {});
+        setInfluencerData(loadedFormData.influencer || {});
+        setCampaignData(loadedFormData.campaign || {});
+        setFinancialData(loadedFormData.financial || {});
       } catch (e) {
         console.error("Error loading saved data:", e);
       }
@@ -95,24 +215,26 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      influencer: influencerData,
-      campaign: campaignData,
-      financial: financialData,
+      influencer: influencerData as InfluencerData,
+      campaign: campaignData as CampaignData,
+      financial: financialData as FinancialData,
     }));
   }, [influencerData, campaignData, financialData]);
 
   // Handle section completion
-  const handleInfluencerComplete = (data: any) => {
+  const handleInfluencerComplete = (data: InfluencerData) => {
     setInfluencerData(data);
     setFormData((prev) => ({ ...prev, influencer: data }));
+    setPreviewData((prev) => ({ ...prev, influencer: data }));
     setSectionValid((prev) => ({ ...prev, influencer: true }));
     // Auto advance to next step
     setCurrentStep(2);
   };
 
-  const handleCampaignComplete = (data: any) => {
+  const handleCampaignComplete = (data: CampaignData) => {
     setCampaignData(data);
     setFormData((prev) => ({ ...prev, campaign: data }));
+    setPreviewData((prev) => ({ ...prev, campaign: data }));
     setSectionValid((prev) => ({ ...prev, campaign: true }));
     // Auto advance to next step
     setCurrentStep(3);
@@ -120,14 +242,18 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
   const handleFinancialComplete = (isComplete: boolean) => {
     setSectionValid((prev) => ({ ...prev, financial: isComplete }));
+    if (isComplete) {
+      setPreviewData((prev) => ({ ...prev, financial: formData.financial }));
+    }
   };
 
-  const handleFinancialDataChange = (data: any) => {
+  const handleFinancialDataChange = (data: FinancialData) => {
     setFinancialData(data);
   };
 
-  const handleBankComplete = (data: any) => {
+  const handleBankComplete = (data: BankData) => {
     setFormData((prev) => ({ ...prev, bank: data }));
+    setPreviewData((prev) => ({ ...prev, bank: data }));
     setSectionValid((prev) => ({ ...prev, bank: true }));
     handleSubmit();
   };
@@ -191,17 +317,56 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
   const handleDownloadPDF = () => {
     if (!invoicePreviewRef.current) return;
     
+    // Verify account holder name matches invoice name
+    const invoiceName = previewData.influencer.fullName;
+    const accountHolderName = previewData.bank.accountHolderName;
+    
+    if (invoiceName !== accountHolderName) {
+      toast({
+        title: "Name Mismatch",
+        description: "The Account Holder Name must match the Invoice Name. Please correct this before generating the PDF.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setSaveLoading(true);
 
     const element = invoicePreviewRef.current;
-    const filename = `Invoice_${formData.campaign.brandName || "Brand"}_${new Date().toISOString().split("T")[0]}.pdf`;
+    const filename = `Invoice_${previewData.campaign.brandName || "Brand"}_${new Date().toISOString().split("T")[0]}.pdf`;
 
     const opt = {
       margin: [10, 10, 10, 10],
       filename: filename,
-      image: { type: "jpeg", quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      image: { 
+        type: "jpeg", 
+        quality: 1,
+        loading: 'eager'
+      },
+      html2canvas: { 
+        scale: 4,
+        useCORS: true,
+        logging: false,
+        letterRendering: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        imageTimeout: 0,
+        onclone: (clonedDoc) => {
+          const element = clonedDoc.querySelector('.invoice-preview');
+          if (element) {
+            element.classList.add('generating-pdf');
+          }
+        }
+      },
+      jsPDF: { 
+        unit: "mm",
+        format: "a4",
+        orientation: "portrait",
+        compress: true,
+        precision: 16,
+        putOnlyUsedFonts: true,
+        floatPrecision: 16
+      },
     };
 
     toast({
@@ -210,28 +375,38 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       variant: "default",
     });
 
-    html2pdf()
-      .from(element)
-      .set(opt)
-      .save()
-      .then(() => {
-        toast({
-          title: "PDF Downloaded",
-          description: "Your invoice has been downloaded successfully.",
-          variant: "default",
+    // Add a temporary class to the element when generating PDF
+    element.classList.add('generating-pdf');
+    
+    // Give the browser a moment to apply the class and load resources
+    setTimeout(() => {
+      html2pdf()
+        .from(element)
+        .set(opt)
+        .save()
+        .then(() => {
+          toast({
+            title: "PDF Downloaded",
+            description: "Your invoice has been downloaded successfully.",
+            variant: "default",
+          });
+          setSaveLoading(false);
+          // Remove the temporary class
+          element.classList.remove('generating-pdf');
+        })
+        .catch((error) => {
+          console.error("PDF generation failed:", error);
+          toast({
+            title: "PDF Generation Failed",
+            description:
+              "There was an error generating your PDF. Please try again.",
+            variant: "destructive",
+          });
+          setSaveLoading(false);
+          // Remove the temporary class
+          element.classList.remove('generating-pdf');
         });
-        setSaveLoading(false);
-      })
-      .catch((error) => {
-        console.error("PDF generation failed:", error);
-        toast({
-          title: "PDF Generation Failed",
-          description:
-            "There was an error generating your PDF. Please try again.",
-          variant: "destructive",
-        });
-        setSaveLoading(false);
-      });
+    }, 250); // Increased timeout to ensure styles are applied
   };
 
   return (
@@ -244,16 +419,16 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       )}
       style={{ backgroundColor: "rgba(15, 23, 42, 0.3)" }}
     >
-      <div className="mb-8 flex items-center justify-center">
+      <div className="mb-4 sm:mb-8 flex items-center justify-center">
         <div className="relative">
-          <h1 className="text-3xl font-bold text-center text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold text-center text-white">
             Influencer Invoice Generator
           </h1>
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full"></div>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-3">
         <ProgressIndicator
           currentStep={currentStep}
           totalSteps={4}
@@ -263,7 +438,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         {(sectionValid.influencer || sectionValid.campaign || sectionValid.financial) && (
           <Button
             onClick={togglePreview}
-            className="ml-4 bg-white/10 hover:bg-white/20 text-white flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
+            className="w-full sm:w-auto ml-0 sm:ml-4 bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
             variant="outline"
           >
             {isPreview ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -274,10 +449,10 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
       {isPreview ? (
         <>
-          <div className="mb-4 flex items-center justify-between">
+          <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
             <Button
               onClick={handleBackFromPreview}
-              className="bg-white/10 hover:bg-white/20 text-white flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
+              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
               variant="outline"
             >
               <ArrowLeft size={16} />
@@ -287,7 +462,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
             <Button
               onClick={handleDownloadPDF}
               disabled={saveLoading}
-              className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
+              className="w-full sm:w-auto mt-2 sm:mt-0 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
             >
               {saveLoading ? (
                 <>
@@ -304,7 +479,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           </div>
           
           <div ref={invoicePreviewRef} className="rounded-xl overflow-hidden shadow-2xl">
-            <InvoicePreview formData={formData} totalAmount={totalAmount} />
+            <InvoicePreview formData={previewData} totalAmount={totalAmount} />
           </div>
         </>
       ) : (
@@ -331,6 +506,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
                 onComplete={handleFinancialComplete}
                 onTotalChange={setTotalAmount}
                 onDataChange={handleFinancialDataChange}
+                defaultValues={formData.financial as any}
               />
             )}
 
@@ -339,6 +515,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
                 onComplete={handleBankComplete}
                 onBack={handlePrevious}
                 className="mx-auto"
+                influencerName={formData.influencer.fullName}
+                defaultValues={formData.bank as any}
               />
             )}
           </div>
