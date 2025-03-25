@@ -2,7 +2,7 @@ import React, { forwardRef } from "react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
 import { cn } from "../lib/utils";
-import companyLogo from "../ASSETS/Company logo.jpg"; // Fixed import path to match the actual file path
+import companyLogo from "../ASSETS/Company logo.jpg";
 
 interface InvoicePreviewProps {
   formData: {
@@ -27,26 +27,19 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className={cn(
-          "w-full max-w-4xl mx-auto p-3 sm:p-6 rounded-xl bg-white shadow-xl border border-gray-200 print:p-4 print:shadow-none print:border-0 print:m-0 print:max-w-none print:w-full generating-pdf:rounded-none",
+          "w-full max-w-[210mm] mx-auto p-8 bg-white shadow-xl border border-gray-200 print:p-6 print:shadow-none print:border-0 print:m-0 print:max-w-none print:w-full generating-pdf:rounded-none",
           className,
         )}
       >
         <style type="text/css" media="print">{`
           @page {
             size: A4;
-            margin: 10mm;
+            margin: 0;
           }
           body {
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
             -webkit-filter: opacity(1) !important;
-          }
-          .print-small-text {
-            font-size: 10pt !important;
-          }
-          .print-compress {
-            margin: 0 !important;
-            padding: 0 !important;
           }
         `}</style>
 
@@ -55,253 +48,176 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
             color-adjust: exact !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
           }
-          .generating-pdf * {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;
+          .invoice-header {
+            position: relative;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e5e7eb;
           }
-          .generating-pdf .header-container {
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: flex-start !important;
-            width: 100% !important;
-            margin-bottom: 1.5rem !important;
+          .invoice-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #000000;
           }
-          .generating-pdf .logo-container {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: flex-end !important;
-            text-align: right !important;
+          .section-header {
+            background: #000000;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
           }
-          .generating-pdf .logo-image {
-            height: 4rem !important;
-            width: auto !important;
-            object-fit: contain !important;
-            margin-bottom: 0.5rem !important;
+          .details-box {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
           }
-          .generating-pdf table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-            page-break-inside: avoid !important;
+          .table-header {
+            background: #000000;
+            color: white;
           }
-          .generating-pdf table th,
-          .generating-pdf table td {
-            padding: 0.25rem 0.5rem !important;
+          .table-row {
+            border-bottom: 1px solid #e5e7eb;
           }
-          .generating-pdf .text-right {
-            text-align: right !important;
+          .table-row:last-child {
+            border-bottom: none;
           }
-          .generating-pdf .pagebreak-avoid {
-            page-break-inside: avoid !important;
+          .total-box {
+            background: #000000;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            margin-top: 0.75rem;
           }
-          .generating-pdf .text-gray-800 { color: #1f2937 !important; }
-          .generating-pdf .text-gray-700 { color: #374151 !important; }
-          .generating-pdf .text-gray-600 { color: #4b5563 !important; }
-          .generating-pdf .text-gray-500 { color: #6b7280 !important; }
-          .generating-pdf .bg-gradient-to-r {
-            background: linear-gradient(to right, #9333ea, #3b82f6) !important;
-            color: white !important;
+          .footer {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #e5e7eb;
+            position: relative;
+          }
+          .footer::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #000000;
           }
         `}</style>
 
-        <div className="header-container pagebreak-avoid">
+        {/* Header Section */}
+        <div className="invoice-header flex justify-between items-start">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 print:text-2xl">INVOICE</h1>
-            <p className="text-gray-500 mt-1 print:text-sm print:mt-0">
-              #{financial.invoiceNumber || "INV-001"}
-            </p>
-          </div>
-          <div className="logo-container">
             <img 
               src={companyLogo} 
-              alt="The PIANOSA Project" 
-              className="logo-image"
+              alt="Company Logo" 
+              className="h-14 w-auto object-contain mb-3"
             />
-            <div className="bg-gradient-to-r from-purple-600 to-blue-500 text-white font-bold py-1 px-3 text-xs sm:text-sm rounded-lg mt-2 print:text-xs print:py-1 print:px-2 print:mt-1">
-              INFLUENCER INVOICE
-            </div>
-            <p className="text-gray-500 mt-1 text-xs sm:text-sm print:text-xs">
-              Date: {format(currentDate, "dd MMM yyyy")}
-            </p>
-            {campaign.month && campaign.year && (
-              <p className="text-gray-500 text-xs sm:text-sm print:text-xs">
-                For: {campaign.month} {campaign.year}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-4 sm:mt-6 mb-4 sm:mb-6 pagebreak-avoid">
-          <div className="space-y-1">
-            <h2 className="text-sm sm:text-base font-semibold text-gray-700 border-b border-gray-200 pb-1 print:text-sm">
-              From
-            </h2>
-            <p className="font-medium text-gray-800 text-sm sm:text-base print:text-sm">
-              {influencer.fullName || campaign.pocName || "Influencer Name"}
-            </p>
-            {influencer.address && (
-              <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-                Address: {influencer.address}
-              </p>
-            )}
-            {influencer.contactNumber && (
-              <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-                Contact: {influencer.contactNumber}
-              </p>
-            )}
-            {bank.panNumber && (
-              <p className="text-gray-600 text-xs sm:text-sm print:text-xs">PAN: {bank.panNumber}</p>
-            )}
-            {financial.isGstApplicable && financial.gstNumber && (
-              <p className="text-gray-600 text-xs sm:text-sm print:text-xs">GST: {financial.gstNumber}</p>
-            )}
-          </div>
-
-          <div className="mt-3 sm:mt-0 space-y-1">
-            <h2 className="text-sm sm:text-base font-semibold text-gray-700 border-b border-gray-200 pb-1 print:text-sm">
-              Bill To
-            </h2>
-            <p className="font-medium text-gray-800 text-sm sm:text-base print:text-sm">
-              PIANOSA PRIVATE LIMITED
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              SSS Enclave, S1 & S2, 3rd Floor, Varthur Main Road,
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              Spice Garden, Silver Spring Layout, Marathahalli,
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              Bangalore - 560037
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              Landmark: Above Tenet Diagnostic Centre
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              GST Number: 29AAQCA9308J1Z2
-            </p>
-          </div>
-        </div>
-
-        <div className="mb-4 sm:mb-6 pagebreak-avoid">
-          <h2 className="text-sm sm:text-base font-semibold text-gray-700 border-b border-gray-200 pb-1 mb-2 print:text-sm print:mb-1">
-            Campaign Details
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 mb-2 print:gap-2 print:mb-1">
-            <div>
-              <p className="text-gray-600 text-xs sm:text-sm print:text-xs"><span className="font-medium">Brand:</span> {campaign.brandName || "-"}</p>
-              <p className="text-gray-600 text-xs sm:text-sm print:text-xs"><span className="font-medium">Product:</span> {campaign.productName || "-"}</p>
-            </div>
-            <div>
-              {campaign.month && campaign.year && (
-                <p className="text-gray-600 text-xs sm:text-sm print:text-xs"><span className="font-medium">Period:</span> {campaign.month} {campaign.year}</p>
+            <div className="space-y-0.5">
+              <h2 className="font-semibold text-gray-800">Influencer Details</h2>
+              <p className="text-sm text-gray-600">Name: {influencer.fullName}</p>
+              <p className="text-sm text-gray-600">Address: {influencer.address}</p>
+              <p className="text-sm text-gray-600">Contact: {influencer.contactNumber}</p>
+              {bank.panNumber && (
+                <p className="text-sm text-gray-600">PAN: {bank.panNumber}</p>
+              )}
+              {financial.isGstApplicable && financial.gstNumber && (
+                <p className="text-sm text-gray-600">GST: {financial.gstNumber}</p>
               )}
             </div>
           </div>
-          {campaign.description && (
-            <div className="mt-1">
-              <p className="text-gray-600 text-xs sm:text-sm print:text-xs"><span className="font-medium">Description:</span> {campaign.description}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="mb-4 sm:mb-6 pagebreak-avoid">
-          <h2 className="text-sm sm:text-base font-semibold text-gray-700 py-1 sm:py-2 px-2 sm:px-3 bg-gray-50 print:text-sm print:py-1">
-            Invoice Details
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-gray-50 border-y border-gray-200">
-                  <th className="py-1 sm:py-2 px-2 sm:px-3 font-semibold text-gray-700 text-xs sm:text-sm print:text-xs print:py-1">
-                    Description
-                  </th>
-                  <th className="py-1 sm:py-2 px-2 sm:px-3 font-semibold text-gray-700 text-right text-xs sm:text-sm print:text-xs print:py-1">
-                    Amount
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                <tr>
-                  <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-700 text-xs sm:text-sm print:text-xs print:py-1">Commercials</td>
-                  <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-700 text-right text-xs sm:text-sm print:text-xs print:py-1">
-                    ₹{financial.commercials?.toFixed(2) || "0.00"}
-                  </td>
-                </tr>
-                {financial.reimbursement > 0 && (
-                  <tr>
-                    <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-700 text-xs sm:text-sm print:text-xs print:py-1">Reimbursement</td>
-                    <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-700 text-right text-xs sm:text-sm print:text-xs print:py-1">
-                      ₹{financial.reimbursement?.toFixed(2) || "0.00"}
-                    </td>
-                  </tr>
-                )}
-                {financial.isGstApplicable && (
-                  <tr>
-                    <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-700 text-xs sm:text-sm print:text-xs print:py-1">
-                      GST ({financial.gstPercentage || 18}%)
-                    </td>
-                    <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-700 text-right text-xs sm:text-sm print:text-xs print:py-1">
-                      ₹
-                      {(
-                        (financial.commercials *
-                          (financial.gstPercentage || 18)) /
-                        100
-                      ).toFixed(2)}
-                    </td>
-                  </tr>
-                )}
-                <tr className="bg-gray-50 font-medium">
-                  <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-800 text-xs sm:text-sm print:text-xs print:py-1">Total</td>
-                  <td className="py-1 sm:py-2 px-2 sm:px-3 text-gray-800 text-right font-bold text-xs sm:text-sm print:text-xs print:py-1">
-                    ₹{totalAmount.toFixed(2)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="text-right">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">INVOICE</h1>
+            <p className="text-sm text-gray-600">Invoice No: {financial.invoiceNumber || "INV-001"}</p>
+            <p className="text-sm text-gray-600">Date: {format(currentDate, "dd/MM/yyyy")}</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pagebreak-avoid">
-          <div className="space-y-1">
-            <h2 className="text-sm sm:text-base font-semibold text-gray-700 border-b border-gray-200 pb-1 print:text-sm">
-              Payment Details
-            </h2>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              Account Holder: {bank.accountHolderName || influencer.fullName || "Account Holder Name"}
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              Account Number: {bank.accountNumber || "XXXXXXXXXXXX"}
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              Bank Name: {bank.bankName || "Bank Name"}
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              Branch: {bank.branchName || "Branch Name"}
-            </p>
-            <p className="text-gray-600 text-xs sm:text-sm print:text-xs">
-              IFSC Code: {bank.ifscCode || "IFSC0000000"}
+        {/* Bill To Section */}
+        <div className="mb-6">
+          <div className="section-header">Bill To:</div>
+          <div className="details-box">
+            <p className="font-semibold text-gray-800">PIANOSA PRIVATE LIMITED</p>
+            <p className="text-sm text-gray-600 mt-1">SSS Enclave, S1 & S2, 3rd Floor, Varthur Main Road</p>
+            <p className="text-sm text-gray-600">Spice Garden, Silver Spring Layout</p>
+            <p className="text-sm text-gray-600">Marathahalli, Bangalore - 560037</p>
+            <p className="text-sm text-gray-600">Landmark: Above Tenet Diagnostic Centre</p>
+            <p className="text-sm text-gray-600 mt-1">GST: 29AAQCA9308J1Z2</p>
+          </div>
+        </div>
+
+        {/* Invoice Details */}
+        <div className="mb-6">
+          <div className="section-header">Description</div>
+          <div className="details-box mb-4">
+            <p className="text-sm text-gray-800">
+              {campaign.brandName} {campaign.productName} collaboration {campaign.month} {campaign.year}
             </p>
           </div>
 
-          <div className="space-y-1 flex flex-col justify-between">
+          <table className="w-full">
+            <thead>
+              <tr className="table-header">
+                <th className="text-left py-2 px-4">Item</th>
+                <th className="text-right py-2 px-4 w-32">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="table-row">
+                <td className="py-2 px-4">Professional Fee</td>
+                <td className="py-2 px-4 text-right">₹{financial.commercials?.toFixed(2) || "0.00"}</td>
+              </tr>
+              {financial.reimbursement > 0 && (
+                <tr className="table-row">
+                  <td className="py-2 px-4">Reimbursement</td>
+                  <td className="py-2 px-4 text-right">₹{financial.reimbursement?.toFixed(2)}</td>
+                </tr>
+              )}
+              {financial.isGstApplicable && (
+                <tr className="table-row">
+                  <td className="py-2 px-4">GST ({financial.gstPercentage || 18}%)</td>
+                  <td className="py-2 px-4 text-right">
+                    ₹{((financial.commercials * (financial.gstPercentage || 18)) / 100).toFixed(2)}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          <div className="total-box text-right">
+            <span className="text-lg font-bold">Total Amount: ₹{totalAmount.toFixed(2)}</span>
+          </div>
+        </div>
+
+        {/* Account Details */}
+        <div className="mb-6">
+          <div className="section-header">Account Details</div>
+          <div className="details-box grid grid-cols-2 gap-4">
             <div>
-              <h2 className="text-sm sm:text-base font-semibold text-gray-700 border-b border-gray-200 pb-1 print:text-sm">
-                Terms & Conditions
-              </h2>
-              <p className="text-gray-600 text-xs mt-1 print:mt-0">
-                1. Payment due within 30 days of invoice date.
-              </p>
-              <p className="text-gray-600 text-xs">
-                2. Please include invoice number in payment reference.
-              </p>
+              <p className="text-sm text-gray-600">Bank Name: {bank.bankName}</p>
+              <p className="text-sm text-gray-600">Account Holder: {bank.accountHolderName}</p>
+              <p className="text-sm text-gray-600">Account Number: {bank.accountNumber}</p>
             </div>
+            <div>
+              <p className="text-sm text-gray-600">IFSC Code: {bank.ifscCode}</p>
+              <p className="text-sm text-gray-600">Branch: {bank.branchName}</p>
+              {bank.panNumber && <p className="text-sm text-gray-600">PAN: {bank.panNumber}</p>}
+            </div>
+          </div>
+        </div>
 
-            <div className="mt-4 sm:mt-auto pt-2 border-t border-gray-200 print:pt-1">
-              <p className="text-right text-gray-500 text-xs italic">
-                This is a computer-generated invoice and does not require a
-                signature.
-              </p>
-            </div>
+        {/* Footer */}
+        <div className="footer">
+          <div className="text-center mb-3">
+            <p className="text-sm text-gray-500">This is a computer generated invoice and does not require signature.</p>
+          </div>
+          <div className="text-center">
+            <p className="text-lg font-semibold text-black">Thank You for Your Business!</p>
           </div>
         </div>
       </motion.div>
