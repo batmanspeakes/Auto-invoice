@@ -146,6 +146,18 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       try {
         const parsedData = JSON.parse(savedData);
         
+        // Check if data has expired
+        if (parsedData.expiresAt && new Date(parsedData.expiresAt) < new Date()) {
+          // Data has expired, remove it
+          localStorage.removeItem(STORAGE_KEY);
+          toast({
+            title: "Saved Data Expired",
+            description: "Your previously saved form data has expired and been cleared.",
+            variant: "default",
+          });
+          return;
+        }
+        
         // Set form data and section validity
         const loadedFormData = parsedData.formData || {
           influencer: {
@@ -206,6 +218,8 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       formData,
       sectionValid,
       totalAmount,
+      // Add expiration date - 7 days from now
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     };
     
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
@@ -309,8 +323,15 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
         variant: "default",
       });
       
-      // Clear storage after successful submission
-      localStorage.removeItem(STORAGE_KEY);
+      // Add confirmation before clearing storage
+      if (confirm("Your invoice has been submitted successfully. Do you want to clear saved data?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        toast({
+          title: "Data Cleared",
+          description: "Your saved form data has been cleared.",
+          variant: "default",
+        });
+      }
     }
   };
 

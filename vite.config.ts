@@ -29,7 +29,21 @@ export default defineConfig({
     },
   },
   server: {
-    // @ts-ignore
-    allowedHosts: true,
-  }
+    host: true, // Listen on all local IPs
+    port: 3000, // Specify a port
+    open: true, // Open browser automatically
+    cors: true, // Enable CORS
+    hmr: {
+      overlay: true // Enable HMR error overlay
+    },
+    // Timeout for server startup
+    watch: {
+      usePolling: true, // Use polling for file changes (helps in some environments)
+    }
+  },
+  build: {
+    sourcemap: true, // Generate sourcemaps for better debugging
+  },
+  // Add clearScreen: false to prevent Vite from clearing the terminal
+  clearScreen: false
 });

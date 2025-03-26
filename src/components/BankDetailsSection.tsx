@@ -143,7 +143,7 @@ const BankDetailsSection = ({
     if (!validateAccountHolderName(data.accountHolderName)) {
       form.setError("accountHolderName", {
         type: "manual",
-        message: "Account holder name must match the influencer's name",
+        message: "Account holder name must match the influencer's name exactly",
       });
       return;
     }
@@ -180,7 +180,9 @@ const BankDetailsSection = ({
                       <Input
                         {...field}
                         placeholder="Enter account holder name"
-                        className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 pr-10 text-sm sm:text-base h-9 sm:h-10"
+                        className={`bg-white/5 border-white/10 text-white placeholder:text-gray-400 pr-10 text-sm sm:text-base h-9 sm:h-10 ${
+                          validationStatus.accountHolderName === "invalid" ? "border-red-500 focus:border-red-500" : ""
+                        }`}
                         onBlur={(e) => {
                           field.onBlur();
                           validateAccountHolderName(e.target.value);
@@ -194,6 +196,13 @@ const BankDetailsSection = ({
                       <AlertCircle className="absolute right-3 top-2 sm:top-2.5 h-4 w-4 text-red-500" />
                     )}
                   </div>
+                  {influencerName && (
+                    <div className={`text-xs sm:text-sm mt-1 ${
+                      validationStatus.accountHolderName === "invalid" ? "text-red-400" : "text-yellow-300"
+                    }`}>
+                      Must match exactly: "{influencerName}"
+                    </div>
+                  )}
                   <FormMessage className="text-xs sm:text-sm" />
                 </FormItem>
               )}

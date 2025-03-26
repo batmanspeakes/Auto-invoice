@@ -95,6 +95,9 @@ const InfluencerDetailsSection: React.FC<InfluencerDetailsSectionProps> = ({
                     {...field}
                   />
                 </FormControl>
+                <div className="text-xs text-yellow-300 mt-1">
+                  Important: This name must match exactly with your bank account holder name for invoice validation.
+                </div>
                 <FormMessage className="text-red-300" />
               </FormItem>
             )}
