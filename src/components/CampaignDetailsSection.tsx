@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
-import { Briefcase, Link, AtSign, Building, Package, Calendar, FileText, ArrowRight } from "lucide-react";
+import { Briefcase, Link, AtSign, Building, Package, Calendar, FileText, ArrowRight, MapPin } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -35,6 +35,11 @@ const formSchema = z.object({
   description: z.string().optional(),
   month: z.string().min(1, { message: "Month is required" }),
   year: z.string().min(4, { message: "Year is required" }),
+  billingCompanyName: z.string().min(2, { message: "Billing company name is required" }),
+  billingAddress1: z.string().min(2, { message: "Billing address line 1 is required" }),
+  billingAddress2: z.string().optional(),
+  billingPincode: z.string().min(6, { message: "Valid pincode is required" }),
+  billingGst: z.string().min(15, { message: "Valid GST number is required" })
 });
 
 type CampaignFormValues = z.infer<typeof formSchema>;
@@ -321,6 +326,122 @@ const CampaignDetailsSection: React.FC<CampaignDetailsSectionProps> = ({
               </FormItem>
             )}
           />
+
+          <div className="border-t border-white/10 pt-6 mt-6">
+            <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+              <Building className="w-5 h-5 text-purple-400" />
+              Billing Details
+            </h3>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="billingCompanyName"
+                render={({ field }) => (
+                  <FormItem className="transition-all duration-300 hover:translate-y-[-2px]">
+                    <FormLabel className="text-white flex items-center gap-2">
+                      <Building className="w-4 h-4 text-purple-400" />
+                      Company Name
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter billing company name"
+                        className="border-white/20 bg-white/5 text-white placeholder:text-white/50 focus:border-white/30 shadow-sm focus:shadow-md transition-all duration-300"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-300" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="billingGst"
+                render={({ field }) => (
+                  <FormItem className="transition-all duration-300 hover:translate-y-[-2px]">
+                    <FormLabel className="text-white flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-purple-400" />
+                      GST Number
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter company GST number"
+                        className="border-white/20 bg-white/5 text-white placeholder:text-white/50 focus:border-white/30 shadow-sm focus:shadow-md transition-all duration-300"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-300" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="space-y-6 mt-6">
+              <FormField
+                control={form.control}
+                name="billingAddress1"
+                render={({ field }) => (
+                  <FormItem className="transition-all duration-300 hover:translate-y-[-2px]">
+                    <FormLabel className="text-white flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-purple-400" />
+                      Address Line 1
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter billing address line 1"
+                        className="border-white/20 bg-white/5 text-white placeholder:text-white/50 focus:border-white/30 shadow-sm focus:shadow-md transition-all duration-300"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-300" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="billingAddress2"
+                render={({ field }) => (
+                  <FormItem className="transition-all duration-300 hover:translate-y-[-2px]">
+                    <FormLabel className="text-white flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-purple-400" />
+                      Address Line 2
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter billing address line 2 (optional)"
+                        className="border-white/20 bg-white/5 text-white placeholder:text-white/50 focus:border-white/30 shadow-sm focus:shadow-md transition-all duration-300"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-300" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="billingPincode"
+                render={({ field }) => (
+                  <FormItem className="transition-all duration-300 hover:translate-y-[-2px]">
+                    <FormLabel className="text-white flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-purple-400" />
+                      Pincode
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter billing pincode"
+                        className="border-white/20 bg-white/5 text-white placeholder:text-white/50 focus:border-white/30 shadow-sm focus:shadow-md transition-all duration-300"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-red-300" />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
           <div className="pt-4 flex justify-end">
             <Button

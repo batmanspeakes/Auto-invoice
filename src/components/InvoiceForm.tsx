@@ -31,6 +31,11 @@ interface CampaignData {
   description: string;
   month: string;
   year: string;
+  billingCompanyName: string;
+  billingAddress1: string;
+  billingAddress2?: string;
+  billingPincode: string;
+  billingGst: string;
 }
 
 interface FinancialData {
@@ -77,6 +82,11 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       description: "",
       month: "",
       year: "",
+      billingCompanyName: "",
+      billingAddress1: "",
+      billingAddress2: "",
+      billingPincode: "",
+      billingGst: "",
     },
     financial: {
       invoiceNumber: "",
@@ -107,6 +117,11 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
       description: "",
       month: "",
       year: "",
+      billingCompanyName: "",
+      billingAddress1: "",
+      billingAddress2: "",
+      billingPincode: "",
+      billingGst: "",
     },
     financial: {
       invoiceNumber: "",
@@ -159,6 +174,11 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
             description: "",
             month: "",
             year: "",
+            billingCompanyName: "",
+            billingAddress1: "",
+            billingAddress2: "",
+            billingPincode: "",
+            billingGst: "",
           },
           financial: {
             invoiceNumber: "",
@@ -434,17 +454,6 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           totalSteps={4}
           onStepClick={handleStepClick}
         />
-
-        {(sectionValid.influencer || sectionValid.campaign || sectionValid.financial) && (
-          <Button
-            onClick={togglePreview}
-            className="w-full sm:w-auto ml-0 sm:ml-4 bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
-            variant="outline"
-          >
-            {isPreview ? <EyeOff size={16} /> : <Eye size={16} />}
-            {isPreview ? "Edit Form" : "Preview Invoice"}
-          </Button>
-        )}
       </div>
 
       {isPreview ? (
@@ -535,6 +544,38 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
             }
             isLastSection={currentStep === 4}
           />
+
+          {/* Show Preview and Download buttons after form completion */}
+          {sectionValid.influencer && sectionValid.campaign && sectionValid.financial && sectionValid.bank && (
+            <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+              <Button
+                onClick={togglePreview}
+                className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
+                variant="outline"
+              >
+                <Eye size={16} />
+                Preview Invoice
+              </Button>
+              
+              <Button
+                onClick={handleDownloadPDF}
+                disabled={saveLoading}
+                className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg"
+              >
+                {saveLoading ? (
+                  <>
+                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <FileText size={16} />
+                    Download PDF
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       )}
 

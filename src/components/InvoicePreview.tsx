@@ -143,12 +143,11 @@ const InvoicePreview = forwardRef<HTMLDivElement, InvoicePreviewProps>(
         <div className="mb-6">
           <div className="section-header">Bill To:</div>
           <div className="details-box">
-            <p className="font-semibold text-gray-800">PIANOSA PRIVATE LIMITED</p>
-            <p className="text-sm text-gray-600 mt-1">SSS Enclave, S1 & S2, 3rd Floor, Varthur Main Road</p>
-            <p className="text-sm text-gray-600">Spice Garden, Silver Spring Layout</p>
-            <p className="text-sm text-gray-600">Marathahalli, Bangalore - 560037</p>
-            <p className="text-sm text-gray-600">Landmark: Above Tenet Diagnostic Centre</p>
-            <p className="text-sm text-gray-600 mt-1">GST: 29AAQCA9308J1Z2</p>
+            <p className="font-semibold text-gray-800">{campaign.billingCompanyName || "Blackmilk Media Pvt Ltd"}</p>
+            <p className="text-sm text-gray-600 mt-1">{campaign.billingAddress1 || "B-1103 KANTI APPARTMENT, MT MARRY"}</p>
+            <p className="text-sm text-gray-600">{campaign.billingAddress2 || "ROAD BANDRA WEST, MUMBAI"}</p>
+            <p className="text-sm text-gray-600">{campaign.billingPincode || "400050"}</p>
+            <p className="text-sm text-gray-600 mt-1">GST: {campaign.billingGst || "27AAHCB8204F1ZU"}</p>
           </div>
         </div>
 
